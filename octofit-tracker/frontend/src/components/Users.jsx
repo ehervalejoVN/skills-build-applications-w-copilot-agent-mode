@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import { buildApiUrl, normalizeCollection } from '../utils/api';
 
 function Users() {
+  const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+  const apiBaseUrl = codespaceName
+    ? `https://${codespaceName}-8000.app.github.dev`
+    : 'http://localhost:8000';
+  const apiEndpoint = `${apiBaseUrl}/api/users/`;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -11,14 +15,17 @@ function Users() {
 
     async function loadUsers() {
       try {
-        const response = await fetch(buildApiUrl('users'));
+        const response = await fetch(apiEndpoint);
         if (!response.ok) {
           throw new Error('Unable to fetch users');
         }
 
         const payload = await response.json();
+        const resolvedItems = Array.isArray(payload)
+          ? payload
+          : payload?.results || payload?.items || payload?.data || [];
         if (isMounted) {
-          setItems(normalizeCollection(payload));
+          setItems(resolvedItems);
         }
       } catch (err) {
         if (isMounted) {
