@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const models_1 = require("../models");
 const connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
+/**
+ * Seed the octofit_db database with test data
+ */
 async function seedDatabase() {
     try {
         await mongoose_1.default.connect(connectionString);
